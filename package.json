@@ -1,0 +1,29 @@
+{
+  "name": "co_retract",
+  "version": "1.0.0",
+  "description": "This is server project of Co-Retract deverloper by TungNS",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.jx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tungns-dev/server-co_retract.git"
+  },
+  "keywords": [
+    "co_retract"
+  ],
+  "author": "TungNS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tungns-dev/server-co_retract/issues"
+  },
+  "homepage": "https://github.com/tungns-dev/server-co_retract#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
