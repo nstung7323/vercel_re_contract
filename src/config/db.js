@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 async function connect(username, password) {
   try {
     await mongoose.connect(
-      `mongodb+srv://${username}:${password}@coretract.xyt3ocg.mongodb.net/database?retryWrites=true&w=majority`
+      `mongodb+srv://${username}:${password}@coretract.xyt3ocg.mongodb.net/database?retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
     );
     console.log("Connection to database successful");
   } catch (err) {

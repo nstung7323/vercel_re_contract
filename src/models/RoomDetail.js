@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 
-const RoomDetailiewSchema = new mongoose.Schema({
+const RoomDetailSchema = new mongoose.Schema({
+  room_overview: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RoomOverview",
+    required: true,
+  },
   description: { type: String, require: false },
   images: [String],
 });
 
-module.exports = mongoose.model("RoomDetailiew", RoomDetailiewSchema);
+module.exports = mongoose.model("RoomDetail", RoomDetailSchema);

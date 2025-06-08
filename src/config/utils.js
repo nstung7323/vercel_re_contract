@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const mongoose = require("mongoose");
 const Constance = require("./constance");
 const BaseResponse = require("./response");
 
@@ -84,6 +85,10 @@ class Utils {
     });
 
     return multer({ storage });
+  }
+
+  uploadImageV2() {
+    return multer({ storage: multer.memoryStorage() });
   }
 }
 

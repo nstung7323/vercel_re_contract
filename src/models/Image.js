@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const ImageSchema = new mongoose.Schema({
   link: { type: String, require: true },
   room_category: { type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "RoomCategory",
     required: true,},
   phone: { type: String, require: false },
   address: { type: String, require: false },

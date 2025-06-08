@@ -7,7 +7,6 @@ class RoomCategoryController {
   async addCategory(req, res) {
     const requestBody = req.body;
     if (!Utils.isEmpty(requestBody)) {
-      const userId = req.user.id;
       const { name, description } = requestBody;
 
       if (Utils.isEmpty(name)) {
@@ -20,9 +19,13 @@ class RoomCategoryController {
         name,
         description,
       });
-      await category.save();
+      try {
+        await category.save();
 
-      return res.json(BaseResponse.success(0, category));
+        return res.json(BaseResponse.success(0, category));
+      } catch (err) {
+        return res.json(BaseResponse.fail("S500", `Add fail: ${err}`));
+      }
     }
     return res.json(BaseResponse.fail("S099", "Request not found!"));
   }
