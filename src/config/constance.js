@@ -3,6 +3,8 @@ module.exports = {
   PUBLIC_ROUTERS: [
     "/",
     "/admin/login",
+    "/admin/resetPassword",
+    "/admin/updatePassword",
     "/api-docs/",
     "/api-docs/swagger-ui-bundle.js",
     "/api-docs/swagger-ui-standalone-preset.js",

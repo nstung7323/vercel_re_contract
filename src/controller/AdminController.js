@@ -7,11 +7,12 @@ const jwt = require("jsonwebtoken");
 // const multer = require("multer");
 // const path = require("path");
 // const fs = require("fs");
-// const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
 require("dotenv").config();
 const SECRET_KEY = process.env.SECRET_KEY;
-// const API_URL = process.env.API_URL;
+const MAIL_USERNAME = process.env.MAIL_USERNAME;
+const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 
 class AdminController {
   // [POST] /users/register
@@ -123,67 +124,69 @@ class AdminController {
   //     return res.json(BaseResponse.fail("S099", "Request not found!"));
   //   }
 
-  // [POST] users/resetPassword
-  //   async resetPassword(req, res) {
-  //     const requestBody = req.body;
-  //     if (!Utils.isEmpty(requestBody)) {
-  //       const userId = req.user.id;
-  //       const email = requestBody.email;
-  //       const otp = requestBody.otp;
+  // [POST] admins/resetPassword
+  async resetPassword(req, res) {
+    const requestBody = req.body;
+    if (!Utils.isEmpty(requestBody)) {
+      const email = requestBody.email;
+      const otp = requestBody.otp;
 
-  //       if (Utils.isEmpty(email)) {
-  //         return res.json(BaseResponse.success(1, "Email cannot be empty"));
-  //       } else if (!Utils.isValidEmail(email)) {
-  //         return res.json(BaseResponse.success(1, "Email incorrect format"));
-  //       } else if (Utils.isEmpty(otp)) {
-  //         return res.json(BaseResponse.success(1, "OTP cannot be empty"));
-  //       }
+      if (Utils.isEmpty(email)) {
+        return res.json(BaseResponse.success(1, "Email cannot be empty"));
+      } else if (!Utils.isValidEmail(email)) {
+        return res.json(BaseResponse.success(1, "Email incorrect format"));
+      } else if (Utils.isEmpty(otp)) {
+        return res.json(BaseResponse.success(1, "OTP cannot be empty"));
+      }
 
-  //       try {
-  //         const transporter = nodemailer.createTransport({
-  //           service: "gmail",
-  //           auth: {
-  //             user: process.env.MAIL_USERNAME,
-  //             pass: process.env.MAIL_PASSWORD,
-  //           },
-  //         });
+      try {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: MAIL_USERNAME,
+            pass: MAIL_PASSWORD,
+          },
+        });
 
-  //         await transporter.sendMail(
-  //           Utils.configMail(process.env.MAIL_USERNAME, email, otp)
-  //         );
+        await transporter.sendMail(
+          Utils.configMail(process.env.MAIL_USERNAME, email, otp)
+        );
 
-  //         return res.json(BaseResponse.success(0, "Email sent successfully!"));
-  //       } catch (error) {
-  //         return res.json(
-  //           BaseResponse.fail("S500", `An error has occurred. ${error.message}`)
-  //         );
-  //       }
-  //     }
+        return res.json(BaseResponse.success(0, "Email sent successfully!"));
+      } catch (err) {
+        return res.json(BaseResponse.fail("S500", `Send email fail: ${err}`));
+      }
+    }
 
-  //     return res.json(BaseResponse.fail("S099", "Request not found!"));
-  //   }
+    return res.json(BaseResponse.fail("S099", "Request not found!"));
+  }
 
   // [POST] /users/updatePassword
-  //   async updatePassword(req, res) {
-  //     const requestBody = req.body;
-  //     if (!Utils.isEmpty(requestBody)) {
-  //       const userId = req.user.id;
-  //       const password = requestBody.password;
+  async updatePassword(req, res) {
+    const requestBody = req.body;
+    if (!Utils.isEmpty(requestBody)) {
+      const password = requestBody.password;
 
-  //       if (Utils.isEmpty(password)) {
-  //         return res.json(BaseResponse.success(1, "Password cannot be empty"));
-  //       }
+      if (Utils.isEmpty(password)) {
+        return res.json(BaseResponse.success(1, "Password cannot be empty"));
+      }
 
-  //       const hashedPassword = await bcrypt.hash(password, 10);
-  //       await User.updateOne(
-  //         { _id: new mongoose.Types.ObjectId(userId) },
-  //         { $set: { password: hashedPassword } }
-  //       );
-  //       return res.json(BaseResponse.success(0, "Update password successfully!"));
-  //     }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      try {
+        await Admin.findOneAndUpdate(
+          {},
+          { $set: { password: hashedPassword } }
+        );
+        return res.json(
+          BaseResponse.success(0, "Update password successfully!")
+        );
+      } catch (err) {
+        return res.json(BaseResponse.success(1, "Update password fail!"));
+      }
+    }
 
-  //     return res.json(BaseResponse.fail("S099", "Request not found!"));
-  //   }
+    return res.json(BaseResponse.fail("S099", "Request not found!"));
+  }
 }
 
 module.exports = new AdminController();
