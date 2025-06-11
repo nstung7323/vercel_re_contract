@@ -59,7 +59,7 @@ class RoomOverviewController {
       try {
         const response = await imgbbUploader({
           apiKey: API_KEY_IMGBB,
-          base64string: requestFile?.buffer.toString("base64"),
+          base64string: buffer.toString("base64"),
         });
         overview.image = response.display_url;
       } catch (err) {

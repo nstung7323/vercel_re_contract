@@ -1,6 +1,10 @@
 const RoomCategory = require("../models/RoomCategory");
+const TypeImage = require("../models/TypeImage");
 const BaseResponse = require("../config/response");
 const Utils = require("../config/utils");
+
+require("dotenv").config();
+const TYPE_IMAGE_ROOM = process.env.TYPE_IMAGE_ROOM;
 
 class RoomCategoryController {
   // [POST] /catogories
@@ -21,6 +25,11 @@ class RoomCategoryController {
       });
       try {
         await category.save();
+        await TypeImage.create({
+          room_category: category._id,
+          name: category.name,
+          type: TYPE_IMAGE_ROOM,
+        });
 
         return res.json(BaseResponse.success(0, category));
       } catch (err) {

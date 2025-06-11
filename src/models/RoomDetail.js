@@ -7,7 +7,6 @@ const RoomDetailSchema = new mongoose.Schema({
     required: true,
   },
   description: { type: String, require: false },
-  images: [String],
 });
 
 module.exports = mongoose.model("RoomDetail", RoomDetailSchema);
