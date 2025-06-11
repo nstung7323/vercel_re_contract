@@ -2,6 +2,8 @@ module.exports = {
   ENVIROMENT: "DEV",
   PUBLIC_ROUTERS: [
     "/",
+    "/data/getAllRoom",
+    "/data/getAllImage",
     "/admin/login",
     "/admin/resetPassword",
     "/admin/updatePassword",

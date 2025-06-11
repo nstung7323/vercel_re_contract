@@ -66,11 +66,18 @@ class RoomDetailController {
           }
           console.log(exitsRoomOverview.room_category);
           console.log(typeImage);
+          const room = await detail.save();
           const docs = await Promise.all(
-            urls.map((url) => Image.create({ type: typeImage._id, link: url }))
+            urls.map((url) =>
+              Image.create({
+                type: typeImage._id,
+                room_detail: room._id,
+                link: url,
+              })
+            )
           );
         }
-        await detail.save();
+
         return res.json(BaseResponse.success(0, detail));
       } catch (err) {
         return res.json(

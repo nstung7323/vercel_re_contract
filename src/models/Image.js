@@ -6,6 +6,11 @@ const ImageSchema = new mongoose.Schema({
     ref: "TypeImage",
     required: true,
   },
+  room_detail: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RoomDetail",
+    required: false,
+  },
   link: { type: String, require: true },
 });
 
