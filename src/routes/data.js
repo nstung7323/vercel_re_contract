@@ -6,5 +6,7 @@ const upload = Utils.uploadImageV2();
 
 router.post("/getAllRoom", dataController.getAllRoomDetail);
 router.post("/getAllImage", dataController.getAllImage);
+router.post("/getAllCuisine", dataController.getAllCuisine);
+router.post("/getAllPackage", dataController.getAllPackage);
 
 module.exports = router;

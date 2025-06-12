@@ -4,6 +4,8 @@ module.exports = {
     "/",
     "/data/getAllRoom",
     "/data/getAllImage",
+    "/data/getAllCuisine",
+    "/data/getAllPackage",
     "/admin/login",
     "/admin/resetPassword",
     "/admin/updatePassword",

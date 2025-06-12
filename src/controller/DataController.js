@@ -3,6 +3,9 @@ const RoomOverview = require("../models/RoomOverview");
 const RoomDetail = require("../models/RoomDetail");
 const TypeImage = require("../models/TypeImage");
 const Image = require("../models/Image");
+const Cuisine = require("../models/Cuisine");
+const PackageOverview = require("../models/PackageOverview");
+const Package = require("../models/Package");
 const BaseResponse = require("../config/response");
 const Utils = require("../config/utils");
 
@@ -56,18 +59,81 @@ class DataController {
   // [POST] /data/getAllImage
   async getAllImage(req, res) {
     try {
-      console.log(TYPE_IMAGE_ROOM);
       const types = await TypeImage.find({
         type: { $in: [TYPE_IMAGE, TYPE_IMAGE_ROOM] },
       }).lean();
       console.log(types);
 
+      const all = [];
       const data = await Promise.all(
         types.map(async (type) => {
           const images = await Image.find({ type: type._id }).lean();
           const urls = images.map((img) => img.link);
+          urls.forEach((url) => {
+            all.push(url);
+          });
           return {
             [type.name || type._id]: urls,
+          };
+        })
+      );
+      data.unshift({
+        "Tất cả": all,
+      });
+
+      const response = data.map((item) => {
+        const name = Object.keys(item)[0];
+        return {
+          type: name,
+          images: item[name],
+        };
+      });
+
+      return res.json(BaseResponse.success(0, response));
+    } catch (err) {
+      return res.json(BaseResponse.fail("S500", `Error: ${err.message}`));
+    }
+  }
+
+  // [POST] /data/getAllCuisine
+  async getAllCuisine(req, res) {
+    try {
+      const cuisines = await Cuisine.find().lean();
+      const imageBanner = cuisines.map((item) => item.image);
+
+      return res.json(
+        BaseResponse.success(0, {
+          cuisines: cuisines,
+          banner: imageBanner,
+        })
+      );
+    } catch (err) {
+      return res.json(BaseResponse.fail("S500", `Error: ${err.message}`));
+    }
+  }
+
+  // [POST] /data/getAllPackage
+  async getAllPackage(req, res) {
+    try {
+      const overviews = await PackageOverview.find().lean();
+
+      const data = await Promise.all(
+        overviews.map(async (overview) => {
+          const pkg = await Package.findOne({
+            package_overview: overview._id,
+          }).lean();
+          const images = await Image.find({ package_detail: pkg?._id }).lean();
+
+          return {
+            // title: overview.title,
+            // overviewContent: overview.content,
+            // overviewImage: overview.image,
+            // detail: pkg?.content || "",
+            overview,
+            detail: {
+              content: pkg.content,
+              images: images.map((img) => img.link),
+            },
           };
         })
       );

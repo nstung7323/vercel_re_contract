@@ -34,6 +34,8 @@ class RoomOverviewController {
         return res.json(BaseResponse.success(1, "Name room cannot empty"));
       } else if (Utils.isEmpty(price)) {
         return res.json(BaseResponse.success(1, "Room price cannot empty"));
+      } else if (isNaN(price)) {
+        return res.json(BaseResponse.success(1, "Room price cannot empty"));
       } else if (price < 0) {
         return res.json(
           BaseResponse.success(1, "Room price cannot be lessthan zero")
