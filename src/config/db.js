@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 async function connect(username, password) {
   try {
-    await mongoose.connect(
-      `mongodb+srv://${username}:${password}@coretract.xyt3ocg.mongodb.net/database?retryWrites=true&w=majority`,
+    mongoose.connect(
+      `mongodb+srv://${username}:${password}@coretract.xyt3ocg.mongodb.net/database`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
