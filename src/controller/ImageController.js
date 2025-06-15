@@ -6,6 +6,7 @@ const imgbbUploader = require("imgbb-uploader");
 
 require("dotenv").config();
 const API_KEY_IMGBB = process.env.API_KEY_IMGBB;
+const TYPE_GONE = process.env.TYPE_GONE;
 
 class ImageController {
   // [POST] /image/
@@ -48,6 +49,41 @@ class ImageController {
         return res.json(BaseResponse.success(0, "Add successfully"));
       } catch (err) {
         return res.json(BaseResponse.fail("S500", `Add fail: ${err}`));
+      }
+    }
+    return res.json(BaseResponse.fail("S099", "Request is missing!"));
+  }
+
+  // [POST] /image/delete
+  async deleteImage(req, res) {
+    const requestBody = req.body;
+    if (!Utils.isEmpty(requestBody)) {
+      const { id } = requestBody;
+
+      if (Utils.isEmpty(id)) {
+        return res.json(BaseResponse.success(1, "Image cannot empty"));
+      } else if (!Utils.checkTypeId(id)) {
+        return res.json(BaseResponse.success(1, "Iamge incorrect format"));
+      }
+      const exitsImage = await Image.findOne({
+        _id: id,
+      });
+      if (!exitsImage) {
+        return res.json(BaseResponse.success(1, "Iamge not found"));
+      }
+
+      try {
+        await Image.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: {
+              visible: Number(TYPE_GONE),
+            },
+          }
+        );
+        return res.json(BaseResponse.success(0, "Delete successfully"));
+      } catch (err) {
+        return res.json(BaseResponse.fail("S500", `Delete fail: ${err}`));
       }
     }
     return res.json(BaseResponse.fail("S099", "Request is missing!"));

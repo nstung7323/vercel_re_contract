@@ -32,7 +32,7 @@ class Utils {
 
     try {
       const decoded = jwt.verify(token.split(" ")[1], SECRET_KEY);
-      req.user = decoded;
+      req.admin = decoded;
       next();
     } catch (err) {
       return res.json(BaseResponse.fail("S401", "Invalid or expired token."));

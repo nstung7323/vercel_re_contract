@@ -12,6 +12,7 @@ const Utils = require("../config/utils");
 require("dotenv").config();
 const TYPE_IMAGE = process.env.TYPE_IMAGE;
 const TYPE_IMAGE_ROOM = process.env.TYPE_IMAGE_ROOM;
+const TYPE_VISIBLE = process.env.TYPE_VISIBLE;
 
 class DataController {
   // [POST] /data/getAllRoom
@@ -23,6 +24,7 @@ class DataController {
         categories.map(async (category) => {
           const overviews = await RoomOverview.find({
             room_category: category._id,
+            visible: TYPE_VISIBLE,
           }).lean();
 
           const overviewsWithDetail = await Promise.all(
@@ -67,7 +69,10 @@ class DataController {
       const all = [];
       const data = await Promise.all(
         types.map(async (type) => {
-          const images = await Image.find({ type: type._id }).lean();
+          const images = await Image.find({
+            type: type._id,
+            visible: Number(TYPE_VISIBLE),
+          }).lean();
           const urls = images.map((img) => img.link);
           urls.forEach((url) => {
             all.push(url);

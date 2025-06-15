@@ -187,6 +187,88 @@ class AdminController {
 
     return res.json(BaseResponse.fail("S099", "Request not found!"));
   }
+
+  // [POST] /admins/update
+  async update(req, res) {
+    const requestBody = req.body;
+    const id = req.admin.id;
+    if (!Utils.isEmpty(requestBody)) {
+      console.log;
+      const {
+        email,
+        passwordOld,
+        passwordNew,
+        phone,
+        address,
+        name,
+        zalo,
+        facebook,
+        instagram,
+      } = requestBody;
+
+      if (Utils.isEmpty(passwordOld)) {
+        return res.json(
+          BaseResponse.success(1, "Old password cannot be empty")
+        );
+      }
+
+      const admin = await Admin.findOne({ _id: id });
+      if (admin) {
+        const isPasswordCorrect = await bcrypt.compare(
+          passwordOld,
+          admin.password
+        );
+        if (isPasswordCorrect) {
+          const data = {};
+          if (!Utils.isEmpty(email)) {
+            if (!Utils.isValidEmail(email)) {
+              return res.json(
+                BaseResponse.success(1, "Email incorrect format")
+              );
+            }
+            data.email = email;
+          }
+          if (!Utils.isEmpty(passwordNew)) {
+            const hashedPassword = await bcrypt.hash(passwordNew, 10);
+            data.password = hashedPassword;
+          }
+          if (!Utils.isEmpty(phone)) {
+            data.phone = phone;
+          }
+          if (!Utils.isEmpty(address)) {
+            data.address = address;
+          }
+          if (!Utils.isEmpty(name)) {
+            data.name = name;
+          }
+          if (!Utils.isEmpty(zalo)) {
+            data.zalo = zalo;
+          }
+          if (!Utils.isEmpty(facebook)) {
+            data.facebook = facebook;
+          }
+          if (!Utils.isEmpty(instagram)) {
+            data.instagram = instagram;
+          }
+
+          try {
+            await Admin.updateOne(
+              { _id: new mongoose.Types.ObjectId(id) },
+              { $set: data }
+            );
+            return res.json(BaseResponse.success(0, "Update successfully!"));
+          } catch (err) {
+            return res.json(BaseResponse.fail("S500", `Update error: ${err}`));
+          }
+        }
+
+        return res.json(BaseResponse.success(1, "Password incorrect"));
+      }
+      return res.json(BaseResponse.success(1, "Cannot find admin infor!"));
+    }
+
+    return res.json(BaseResponse.fail("S099", "Request not found!"));
+  }
 }
 
 module.exports = new AdminController();
