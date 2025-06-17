@@ -6,6 +6,7 @@ module.exports = {
     "/data/getAllImage",
     "/data/getAllCuisine",
     "/data/getAllPackage",
+    "/data/contact",
     "/admin/login",
     "/admin/resetPassword",
     "/admin/updatePassword",

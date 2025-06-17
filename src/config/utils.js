@@ -141,6 +141,73 @@ class Utils {
 `,
     };
   }
+
+  configMailV2(username, recipientEmail, name, mail, phone, subject, message) {
+    return {
+      from: username,
+      to: recipientEmail,
+      subject: `Cọ Retreat - Bộ phận Liên hệ`,
+      html: `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${name} muốn liên hệ</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f0f4f8; }
+    .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .header { background-color: #0077b6; color: #ffffff; text-align: center; padding: 20px; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { padding: 30px; color: #333333; }
+    .content p { line-height: 1.6; margin-bottom: 20px; }
+    .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .info-table td { padding: 12px; border: 1px solid #e0e0e0; }
+    .info-table td.label { background-color: #f7fafc; font-weight: bold; width: 30%; }
+    .footer { background-color: #f7fafc; text-align: center; padding: 15px; font-size: 12px; color: #888888; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>${name} mong muốn: ${subject}</h1>
+    </div>
+    <div class="content">
+      <p>Xin chào Cọ Retreat,</p>
+      <p>Bạn vừa nhận được yêu cầu liên hệ từ <strong>${name}</strong>. Dưới đây là thông tin chi tiết:</p>
+      <table class="info-table">
+        <tr>
+          <td class="label">Họ và tên</td>
+          <td>${name}</td>
+        </tr>
+        <tr>
+          <td class="label">Email</td>
+          <td>${mail}</td>
+        </tr>
+        <tr>
+          <td class="label">Điện thoại</td>
+          <td>${phone}</td>
+        </tr>
+        <tr>
+          <td class="label">Chủ đề</td>
+          <td>${subject}</td>
+        </tr>
+        <tr>
+          <td class="label">Nội dung</td>
+          <td>${message}</td>
+        </tr>
+      </table>
+      <p>Vui lòng phản hồi cho <strong>${name}</strong> tại <a href="mailto:${mail}">${mail}</a> sớm nhất có thể.</p>
+    </div>
+    <div class="footer">
+      <p>Trân trọng,<br/>Team IT – Cọ Retreat</p>
+      <p>© TungNS Developer – Hà Nội, Việt Nam</p>
+    </div>
+  </div>
+</body>
+</html>
+`,
+    };
+  }
 }
 
 module.exports = new Utils();

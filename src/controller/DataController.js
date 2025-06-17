@@ -8,11 +8,15 @@ const PackageOverview = require("../models/PackageOverview");
 const Package = require("../models/Package");
 const BaseResponse = require("../config/response");
 const Utils = require("../config/utils");
+const nodemailer = require("nodemailer");
+const Admin = require("../models/Admin");
 
 require("dotenv").config();
 const TYPE_IMAGE = process.env.TYPE_IMAGE;
 const TYPE_IMAGE_ROOM = process.env.TYPE_IMAGE_ROOM;
 const TYPE_VISIBLE = process.env.TYPE_VISIBLE;
+const MAIL_USERNAME = process.env.MAIL_USERNAME;
+const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 
 class DataController {
   // [POST] /data/getAllRoom
@@ -147,6 +151,50 @@ class DataController {
     } catch (err) {
       return res.json(BaseResponse.fail("S500", `Error: ${err.message}`));
     }
+  }
+
+  // [POST] /data/contact
+  async sendMailContact(req, res) {
+    const requestBody = req.body;
+    if (!Utils.isEmpty(requestBody)) {
+      const { name, email, phone, subject, message } = requestBody;
+
+      if (Utils.isEmpty(name)) {
+        return res.json(BaseResponse.success(1, "Name cannot be empty"));
+      } else if (Utils.isEmpty(email)) {
+        return res.json(BaseResponse.success(1, "Email cannot be empty"));
+      } else if (!Utils.isValidEmail(email)) {
+        return res.json(BaseResponse.success(1, "Email incorrect format"));
+      } else if (Utils.isEmpty(phone)) {
+        return res.json(BaseResponse.success(1, "Phone cannot be empty"));
+      } else if (Utils.isEmpty(subject)) {
+        return res.json(BaseResponse.success(1, "Subject cannot be empty"));
+      } else if (Utils.isEmpty(message)) {
+        return res.json(BaseResponse.success(1, "Message cannot be empty"));
+      }
+
+      const admin = await Admin.findOne({});
+      console.log(admin)
+
+      try {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: MAIL_USERNAME,
+            pass: MAIL_PASSWORD,
+          },
+        });
+        console.log(MAIL_USERNAME)
+        await transporter.sendMail(
+          Utils.configMailV2(MAIL_USERNAME, admin.email, name, email, phone, subject, message)
+        );
+
+        return res.json(BaseResponse.success(0, "Email sent successfully!"));
+      } catch (err) {
+        return res.json(BaseResponse.fail("S500", `Send email fail: ${err}`));
+      }
+    }
+    return res.json(BaseResponse.fail("S099", "Request not found!"));
   }
 }
 

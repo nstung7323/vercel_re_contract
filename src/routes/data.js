@@ -8,5 +8,6 @@ router.post("/getAllRoom", dataController.getAllRoomDetail);
 router.post("/getAllImage", dataController.getAllImage);
 router.post("/getAllCuisine", dataController.getAllCuisine);
 router.post("/getAllPackage", dataController.getAllPackage);
+router.post("/contact", dataController.sendMailContact);
 
 module.exports = router;
