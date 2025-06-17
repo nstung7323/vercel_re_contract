@@ -128,34 +128,39 @@ class AdminController {
   async resetPassword(req, res) {
     const requestBody = req.body;
     if (!Utils.isEmpty(requestBody)) {
-      const email = requestBody.email;
+      // const email = requestBody.email;
       const otp = requestBody.otp;
 
-      if (Utils.isEmpty(email)) {
-        return res.json(BaseResponse.success(1, "Email cannot be empty"));
-      } else if (!Utils.isValidEmail(email)) {
-        return res.json(BaseResponse.success(1, "Email incorrect format"));
-      } else if (Utils.isEmpty(otp)) {
+      // if (Utils.isEmpty(email)) {
+      //   return res.json(BaseResponse.success(1, "Email cannot be empty"));
+      // } else if (!Utils.isValidEmail(email)) {
+      //   return res.json(BaseResponse.success(1, "Email incorrect format"));
+      // } else
+      if (Utils.isEmpty(otp)) {
         return res.json(BaseResponse.success(1, "OTP cannot be empty"));
       }
 
-      try {
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: MAIL_USERNAME,
-            pass: MAIL_PASSWORD,
-          },
-        });
+      const admin = await Admin.findOne({});
+      if (admin) {
+        try {
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: MAIL_USERNAME,
+              pass: MAIL_PASSWORD,
+            },
+          });
 
-        await transporter.sendMail(
-          Utils.configMail(process.env.MAIL_USERNAME, email, otp)
-        );
+          await transporter.sendMail(
+            Utils.configMail(process.env.MAIL_USERNAME, admin.email, otp)
+          );
 
-        return res.json(BaseResponse.success(0, "Email sent successfully!"));
-      } catch (err) {
-        return res.json(BaseResponse.fail("S500", `Send email fail: ${err}`));
+          return res.json(BaseResponse.success(0, "Email sent successfully!"));
+        } catch (err) {
+          return res.json(BaseResponse.fail("S500", `Send email fail: ${err}`));
+        }
       }
+      return res.json(BaseResponse.success(1, "Cannot get infor admin"));
     }
 
     return res.json(BaseResponse.fail("S099", "Request not found!"));
