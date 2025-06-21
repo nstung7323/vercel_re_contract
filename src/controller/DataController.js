@@ -43,7 +43,14 @@ class DataController {
               console.log(detail._id);
               console.log(images);
 
-              detail.images = [...images.map((i) => i.link), overview.image];
+              detail.images = [
+                ...images.map((i) => ({
+                  _id: i._id,
+                  type: i.type,
+                  link: i.link,
+                })),
+                overview.image,
+              ];
 
               return { ...overview, detail };
             })
@@ -107,7 +114,9 @@ class DataController {
   // [POST] /data/getAllCuisine
   async getAllCuisine(req, res) {
     try {
-      const cuisines = await Cuisine.find().lean();
+      const cuisines = await Cuisine.find({
+        visible: TYPE_VISIBLE,
+      }).lean();
       const imageBanner = cuisines.map((item) => item.image);
 
       return res.json(
@@ -174,7 +183,7 @@ class DataController {
       }
 
       const admin = await Admin.findOne({});
-      console.log(admin)
+      console.log(admin);
 
       try {
         const transporter = nodemailer.createTransport({
@@ -184,9 +193,17 @@ class DataController {
             pass: MAIL_PASSWORD,
           },
         });
-        console.log(MAIL_USERNAME)
+        console.log(MAIL_USERNAME);
         await transporter.sendMail(
-          Utils.configMailV2(MAIL_USERNAME, admin.email, name, email, phone, subject, message)
+          Utils.configMailV2(
+            MAIL_USERNAME,
+            admin.email,
+            name,
+            email,
+            phone,
+            subject,
+            message
+          )
         );
 
         return res.json(BaseResponse.success(0, "Email sent successfully!"));

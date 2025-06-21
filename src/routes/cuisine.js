@@ -4,6 +4,8 @@ const cuisineController = require("../controller/CuisineController");
 const Utils = require("../config/utils");
 const upload = Utils.uploadImageV2();
 
+router.post("/update", upload.single("image"), cuisineController.updateCuisine);
+router.post("/delete", cuisineController.deleteCuisine);
 router.post("/", upload.single("image"), cuisineController.addCuisine);
 
 module.exports = router;

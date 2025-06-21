@@ -7,6 +7,17 @@ const TYPE_IMAGE = process.env.TYPE_IMAGE;
 
 class TypeImageController {
   // [POST] /typeImage/
+  async getAllType(req, res) {
+    try {
+      const types = await TypeImage.find({ type: TYPE_IMAGE });
+
+      return res.json(BaseResponse.success(0, types));
+    } catch (err) {
+      return res.json(BaseResponse.fail("S500", `Get error: ${err}`));
+    }
+  }
+
+  // [POST] /typeImage/
   async addType(req, res) {
     const requestBody = req.body;
     if (!Utils.isEmpty(requestBody)) {
