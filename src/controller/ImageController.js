@@ -1,8 +1,10 @@
 const Image = require("../models/Image");
 const TypeImage = require("../models/TypeImage");
+const RoomDetail = require("../models/RoomDetail");
 const BaseResponse = require("../config/response");
 const Utils = require("../config/utils");
 const imgbbUploader = require("imgbb-uploader");
+const mongoose = require("mongoose");
 
 require("dotenv").config();
 const API_KEY_IMGBB = process.env.API_KEY_IMGBB;
@@ -14,7 +16,7 @@ class ImageController {
     const requestBody = req.body;
     const requestFile = req.files;
     if (!Utils.isEmpty(requestBody) && !Utils.isEmpty(requestFile)) {
-      const { type } = requestBody;
+      const { type, room_detail } = requestBody;
 
       if (Utils.isEmpty(type)) {
         return res.json(BaseResponse.success(1, "Type image cannot empty"));
@@ -28,6 +30,18 @@ class ImageController {
         return res.json(BaseResponse.success(1, "Type iamge not found"));
       }
 
+      if (!Utils.isEmpty(room_detail)) {
+        if (!Utils.checkTypeId(room_detail)) {
+          return res.json(BaseResponse.success(1, "Room incorrect format"));
+        }
+        const exitsRoom = await RoomDetail.findOne({
+          _id: room_detail,
+        });
+        if (!exitsRoom) {
+          return res.json(BaseResponse.success(1, "Room not found"));
+        }
+      }
+
       try {
         const uploadPromises = requestFile.map((file) =>
           imgbbUploader({
@@ -39,10 +53,15 @@ class ImageController {
         const urls = results.map((res) => res.display_url);
         const docs = await Promise.all(
           urls.map((url) => {
-            Image.create({
+            const imageData = {
               type: exitsTypeImage._id,
               link: url,
-            });
+            };
+            console.log(room_detail)
+            if (!Utils.isEmpty(room_detail)) {
+              imageData.room_detail = new mongoose.Types.ObjectId(room_detail);
+            }
+            Image.create(imageData);
           })
         );
 
