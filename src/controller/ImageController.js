@@ -16,7 +16,7 @@ class ImageController {
     const requestBody = req.body;
     const requestFile = req.files;
     if (!Utils.isEmpty(requestBody) && !Utils.isEmpty(requestFile)) {
-      const { type, room_detail } = requestBody;
+      const { type, imageId, room_detail } = requestBody;
 
       if (Utils.isEmpty(type)) {
         return res.json(BaseResponse.success(1, "Type image cannot empty"));
@@ -30,7 +30,26 @@ class ImageController {
         return res.json(BaseResponse.success(1, "Type iamge not found"));
       }
 
-      if (!Utils.isEmpty(room_detail)) {
+      if (!Utils.isEmpty(imageId) && !Utils.isEmpty(room_detail)) {
+        if (!Utils.checkTypeId(imageId)) {
+          return res.json(BaseResponse.success(1, "Image incorrect format"));
+        }
+        try {
+          const exitsImage = await Image.findOneAndUpdate(
+            {
+              _id: imageId,
+            },
+            {
+              $set: { visible: Number(TYPE_GONE) },
+            }
+          );
+          if (!exitsImage) {
+            return res.json(BaseResponse.success(1, "Image not found"));
+          }
+        } catch (err) {
+          return res.json(BaseResponse.fail("S500", `Update fail: ${err}`));
+        }
+
         if (!Utils.checkTypeId(room_detail)) {
           return res.json(BaseResponse.success(1, "Room incorrect format"));
         }
@@ -57,8 +76,9 @@ class ImageController {
               type: exitsTypeImage._id,
               link: url,
             };
-            console.log(room_detail)
-            if (!Utils.isEmpty(room_detail)) {
+            console.log(imageId);
+            if (!Utils.isEmpty(imageId) && !Utils.isEmpty(room_detail)) {
+              console.log(imageId);
               imageData.room_detail = new mongoose.Types.ObjectId(room_detail);
             }
             Image.create(imageData);

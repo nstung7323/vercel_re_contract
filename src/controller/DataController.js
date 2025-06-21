@@ -39,6 +39,7 @@ class DataController {
 
               const images = await Image.find({
                 room_detail: detail._id,
+                visible: Number(TYPE_VISIBLE),
               }).lean();
               console.log(detail._id);
               console.log(images);
